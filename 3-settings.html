@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Интерфейс 3 — Настройки</title>
+  <link rel="stylesheet" href="3-settings.css" />
+</head>
+<body>
+  <div class="mock-scene">
+    <div class="mock-sky"></div>
+    <div class="mock-panel">
+      <h2>Настройки</h2>
+
+      <div class="block">
+        <label>Громкость звука <span>50%</span></label>
+        <input type="range" min="0" max="100" value="50" />
+      </div>
+
+      <div class="block">
+        <p>Сложность</p>
+        <div class="diff-row">
+          <label><input type="radio" name="d" />Лёгкая</label>
+          <label><input type="radio" name="d" checked />Средняя</label>
+          <label><input type="radio" name="d" />Сложная</label>
+        </div>
+      </div>
+
+      <div class="block" style="text-align:center;">
+        <p>Перетащите скин на птичку</p>
+        <div class="skins">
+          <div class="skin classic"></div>
+          <div class="skin red"></div>
+          <div class="skin blue"></div>
+          <div class="skin gold"></div>
+        </div>
+        <div class="drop">сюда</div>
+      </div>
+
+      <button>Назад</button>
+    </div>
+  </div>
+</body>
+</html>

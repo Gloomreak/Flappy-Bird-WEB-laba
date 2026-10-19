@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flappy Bird — ЛР №5</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="game" id="game">
+    <div class="background"></div>
+    <div class="floor" id="floor"></div>
+
+    <div class="pipes-container" id="pipes-container"></div>
+    <div class="coins-container" id="coins-container"></div>
+    <div class="particles-container" id="particles-container"></div>
+
+    <!-- Птичка. name="player" — доступ по имени параметра -->
+    <div class="bird" id="bird" name="player">
+      <div class="bird-body" id="bird-body">
+        <div class="bird-beak"></div>
+      </div>
+    </div>
+
+    <div class="ui-layer">
+      <div class="score-display hidden" id="score-display">0</div>
+      <div class="level-display hidden" id="level-display">Уровень 1</div>
+      <div class="coin-display hidden" id="coin-display">0</div>
+      <div class="level-up-banner" id="level-up-banner"></div>
+
+      <!-- 1. ИНТЕРФЕЙС: СТАРТ ИГРЫ -->
+      <div class="screen" id="screen-menu">
+        <h1>Flappy Bird</h1>
+        <div class="menu-buttons">
+          <button id="btn-start">Начать игру</button>
+          <button id="btn-record">Рекорд</button>
+          <button id="btn-settings">Настройки</button>
+        </div>
+      </div>
+
+      <!-- Экран обратного отсчёта (часть игрового интерфейса, Promise-демо) -->
+      <div class="screen hidden" id="screen-countdown">
+        <div class="countdown-number" id="countdown-number">3</div>
+      </div>
+
+      <!-- Рекорд -->
+      <div class="screen hidden" id="screen-record">
+        <h2>Рекорд</h2>
+        <p>Лучший счёт: <span id="high-score">0</span></p>
+        <p>Всего монет: <span id="total-coins">0</span></p>
+        <div class="menu-buttons">
+          <button id="btn-back-from-record">Назад</button>
+        </div>
+      </div>
+
+      <!-- 3. ИНТЕРФЕЙС: НАСТРОЙКИ ИГРЫ -->
+      <div class="screen hidden" id="screen-settings">
+        <h2>Настройки</h2>
+        <form name="settingsForm" id="settings-form">
+          <div class="settings-block">
+            <label for="volume-range">
+              <span>Громкость звука</span>
+              <span id="volume-value">50%</span>
+            </label>
+            <input type="range" id="volume-range" name="volume" min="0" max="100" value="50" />
+          </div>
+
+          <div class="settings-block">
+            <p style="margin-bottom:8px;">Сложность</p>
+            <div class="difficulty-options">
+              <label><input type="radio" name="difficulty" value="easy" /><span>Лёгкая</span></label>
+              <label><input type="radio" name="difficulty" value="normal" checked /><span>Средняя</span></label>
+              <label><input type="radio" name="difficulty" value="hard" /><span>Сложная</span></label>
+            </div>
+          </div>
+
+          <div class="settings-block" style="text-align:center;">
+            <p>Перетащите скин на птичку, чтобы выбрать её вид</p>
+            <div class="skins-row" id="skins-row">
+              <div class="skin-swatch classic" draggable="true" data-skin="classic" title="Классика"></div>
+              <div class="skin-swatch red" draggable="true" data-skin="red" title="Красный"></div>
+              <div class="skin-swatch blue" draggable="true" data-skin="blue" title="Синий"></div>
+              <div class="skin-swatch white" draggable="true" data-skin="white" title="Белый"></div>
+            </div>
+            <div class="drop-zone" id="drop-zone">сюда</div>
+          </div>
+        </form>
+        <div class="menu-buttons">
+          <button id="btn-back-from-settings">Назад</button>
+        </div>
+      </div>
+
+      <!-- 4. ИНТЕРФЕЙС: ЗАВЕРШЕНИЕ УРОВНЯ / ИГРЫ -->
+      <div class="screen hidden" id="screen-gameover">
+        <h2 id="gameover-title">Игра окончена</h2>
+        <p>Счёт: <span id="final-score">0</span></p>
+        <p>Рекорд: <span id="high-score-gameover">0</span></p>
+        <p>Монет за игру: <span id="coins-collected">0</span></p>
+        <div class="menu-buttons">
+          <button id="btn-restart">Играть снова</button>
+          <button id="btn-to-menu">В меню</button>
+        </div>
+      </div>
+
+      <!-- Пауза (фокус/блюр окна, клавиша P) -->
+      <div class="screen hidden" id="screen-pause">
+        <h2>⏸ Пауза</h2>
+        <p>Нажмите «P» или кликните, чтобы продолжить</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Звуки. Событие volumechange отслеживается на элементах audio -->
+  <audio id="sfx-jump" preload="auto" src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=" volume="0.5"></audio>
+  <audio id="sfx-coin" preload="auto" src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=" volume="0.5"></audio>
+
+  <script src="script.js"></script>
+</body>
+</html>

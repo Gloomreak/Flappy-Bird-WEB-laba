@@ -1,0 +1,287 @@
+/* =========================================================================
+   ЛР №5. Динамические web-страницы. Игра "Flappy Bird".
+   Стили общего игрового интерфейса.
+   ========================================================================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #1a1a2e;
+  font-family: "Segoe UI", "Arial", sans-serif;
+  overflow: hidden;
+}
+
+.game {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #70c5ce;
+  cursor: pointer;
+}
+
+.background,
+.pipes-container,
+.coins-container,
+.particles-container,
+.bird,
+.ui-layer {
+  position: absolute;
+  inset: 0;
+}
+
+.background {
+  z-index: 1;
+  background: linear-gradient(to bottom, #70c5ce 0%, #70c5ce 75%, #ded895 75%, #ded895 100%);
+}
+
+.pipes-container { z-index: 2; }
+.coins-container { z-index: 3; }
+.particles-container { z-index: 6; pointer-events: none; }
+
+/* === Птичка (простая: жёлтый круг, глаз и клюв) === */
+.bird {
+  z-index: 4;
+  width: 50px;
+  height: 40px;
+  position: absolute;
+  transform: translate(100px, 50vh);
+  will-change: transform;
+}
+
+.bird-body {
+  width: 100%;
+  height: 100%;
+  background: #ffd23f;
+  border-radius: 50%;
+  border: 2px solid #333;
+  position: relative;
+  transition: background 0.3s ease; /* используется для отслеживания смены скина (transitionend) */
+}
+
+/* Скины птички — переключаются через drag-and-drop в настройках */
+.bird-body.pressed { transform: scaleY(0.85); }
+.bird-body.skin-red   { background: #ff5c5c; }
+.bird-body.skin-blue  { background: #5c9dff; }
+.bird-body.skin-white { background: #f2f2f2; }
+
+/* глаз — маленький чёрный кружок */
+.bird-body::before {
+  content: "";
+  position: absolute;
+  width: 8px; height: 8px;
+  background: #222;
+  border-radius: 50%;
+  top: 10px; right: 10px;
+}
+
+/* клюв — оранжевый прямоугольник */
+.bird-beak {
+  position: absolute;
+  width: 14px; height: 8px;
+  background: #ff8c1a;
+  top: 18px; right: -12px;
+}
+
+.ui-layer { z-index: 10; pointer-events: none; }
+
+/* === Экраны === */
+.screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.72);
+  color: white;
+  text-align: center;
+  pointer-events: auto;
+  padding: 20px;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.28s ease, transform 0.28s ease; /* для transitionend */
+  overflow-y: auto;
+}
+
+.screen.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.screen h1 { font-size: 52px; margin-bottom: 30px; text-shadow: 3px 3px 6px rgba(0,0,0,.8); letter-spacing: 2px; }
+.screen h2 { font-size: 38px; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,.8); }
+.screen p  { font-size: 20px; margin-bottom: 10px; }
+
+.menu-buttons { display: flex; flex-direction: column; gap: 16px; margin-top: 20px; }
+
+.screen button {
+  padding: 16px 46px;
+  font-size: 22px;
+  font-weight: bold;
+  background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+  color: white;
+  border: 3px solid #d35400;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-shadow: 1px 1px 2px rgba(0,0,0,.5);
+  box-shadow: 0 6px 15px rgba(0,0,0,.3);
+}
+
+.screen button:hover { transform: translateY(-3px); box-shadow: 0 9px 20px rgba(0,0,0,.4); }
+.screen button:active { transform: translateY(0); }
+.screen button:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+.screen button.glow {
+  box-shadow: 0 0 0 4px rgba(255, 215, 0, .8), 0 9px 20px rgba(0,0,0,.4);
+}
+
+/* === Счёт === */
+.score-display {
+  position: absolute;
+  top: 36px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 60px; font-weight: bold; color: white;
+  text-shadow: 3px 3px 6px rgba(0,0,0,.7);
+}
+
+.level-display {
+  position: absolute;
+  top: 110px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 18px; color: #fff8d0;
+  text-shadow: 2px 2px 4px rgba(0,0,0,.7);
+  background: rgba(0,0,0,.25);
+  padding: 4px 14px;
+  border-radius: 20px;
+}
+
+/* === Пол === */
+.floor { position: absolute; bottom: 0; left: 0; right: 0; height: 150px; background: linear-gradient(to bottom, #ded895 0%, #c9b97a 100%); border-top: 4px solid #8b7355; z-index: 5; }
+.floor::before { content: ""; position: absolute; top: 20px; left: 0; right: 0; height: 2px; background: repeating-linear-gradient(to right, transparent, transparent 40px, rgba(0,0,0,.1) 40px, rgba(0,0,0,.1) 42px); }
+
+/* === Трубы === */
+.pipe { position: absolute; width: 70px; background: linear-gradient(to right, #5a9e3f 0%, #73c04d 30%, #73c04d 70%, #4a8533 100%); border: 3px solid #2d5016; will-change: transform; }
+.pipe::before { content: ""; position: absolute; left: -6px; right: -6px; height: 30px; background: linear-gradient(to right, #5a9e3f 0%, #73c04d 30%, #73c04d 70%, #4a8533 100%); border: 3px solid #2d5016; border-radius: 4px; }
+.pipe--top::before { bottom: -3px; }
+.pipe--bottom::before { top: -3px; }
+
+/* === Монеты === */
+.coin {
+  position: absolute;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff6c8, #ffd23f 55%, #d19a1a 100%);
+  border: 2px solid #a97a10;
+  box-shadow: 0 0 6px rgba(255, 210, 0, .8);
+}
+.coin.collected {
+  animation: coin-collect 0.35s ease-out forwards;
+}
+@keyframes coin-collect {
+  to { transform: translateY(-40px) scale(1.8); opacity: 0; }
+}
+
+/* Всплеск очков "+1" при сборе монеты (создаётся через after()/before()) */
+.splash {
+  position: absolute;
+  color: #ffd23f;
+  font-weight: bold;
+  font-size: 20px;
+  text-shadow: 1px 1px 2px #000;
+  pointer-events: none;
+  animation: splash-rise 0.6s ease-out forwards;
+}
+@keyframes splash-rise {
+  to { transform: translateY(-50px); opacity: 0; }
+}
+
+/* === Экран настроек === */
+.settings-block { width: min(420px, 90vw); text-align: left; margin-bottom: 14px; }
+.settings-block label { display: flex; justify-content: space-between; font-size: 16px; margin-bottom: 6px; }
+.settings-block input[type="range"] { width: 100%; }
+
+.difficulty-options { display: flex; gap: 10px; justify-content: center; }
+.difficulty-options label {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,.1);
+  padding: 8px 14px; border-radius: 8px;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+.difficulty-options input:checked + span { font-weight: bold; color: #ffd23f; }
+.difficulty-options label:has(input:focus-visible) { border-color: #ffd23f; }
+
+.skins-row { display: flex; gap: 16px; justify-content: center; margin: 10px 0 4px; }
+.skin-swatch {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 2px solid #333;
+  cursor: grab;
+}
+.skin-swatch.classic { background: #ffd23f; }
+.skin-swatch.red   { background: #ff5c5c; }
+.skin-swatch.blue  { background: #5c9dff; }
+.skin-swatch.white { background: #f2f2f2; }
+.skin-swatch.dragging { opacity: .4; }
+
+.drop-zone {
+  width: 90px; height: 70px;
+  margin: 10px auto 4px;
+  border: 3px dashed rgba(255,255,255,.6);
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  transition: background .2s, border-color .2s;
+}
+.drop-zone.drag-over { background: rgba(255,255,255,.2); border-color: #ffd23f; }
+
+/* === Счётчик монет === */
+.coin-display {
+  position: absolute;
+  top: 36px; right: 24px;
+  font-size: 24px; font-weight: bold; color: #ffd23f;
+  text-shadow: 2px 2px 4px rgba(0,0,0,.7);
+}
+
+/* === Оверлей уровня === */
+.level-up-banner {
+  position: absolute;
+  top: 40%; left: 50%;
+  transform: translate(-50%, -50%) scale(0.5);
+  font-size: 44px;
+  font-weight: bold;
+  color: #ffd23f;
+  text-shadow: 3px 3px 8px #000;
+  opacity: 0;
+  z-index: 30;
+  pointer-events: none;
+}
+.level-up-banner.playing {
+  animation: level-pop 1.4s ease-out forwards;
+}
+@keyframes level-pop {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.4); }
+  20%  { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+  30%  { transform: translate(-50%, -50%) scale(1); }
+  80%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+}
+
+.countdown-number {
+  font-size: 120px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 4px 4px 10px rgba(0,0,0,.7);
+}
+
+.hidden { display: none !important; }
